@@ -1,0 +1,401 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday to You Machu 🎂</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a052e 0%, #3b0d5e 40%, #6d1a8a 100%);
+    color: #fff;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  /* ===== Floating balloons / hearts ===== */
+  .floating {
+    position: fixed;
+    bottom: -100px;
+    font-size: 30px;
+    animation: floatUp linear infinite;
+    opacity: 0.7;
+    pointer-events: none;
+    z-index: 1;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: 0.8; }
+    100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ===== Hero section ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero .cake { font-size: 90px; animation: bounce 2s infinite; }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-20px); }
+  }
+
+  .hero h1 {
+    font-size: clamp(48px, 10vw, 100px);
+    background: linear-gradient(90deg, #ffd166, #ff6b6b, #ffd166);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 20px 0 10px;
+    letter-spacing: 3px;
+    text-shadow: 0 0 40px rgba(255, 107, 107, 0.3);
+  }
+
+  .hero .name {
+    font-size: clamp(28px, 5vw, 50px);
+    color: #ffe8a3;
+    margin-bottom: 15px;
+  }
+
+  .hero .message {
+    max-width: 650px;
+    font-size: 18px;
+    line-height: 1.7;
+    color: #e8d5f5;
+    padding: 0 15px;
+  }
+
+  .hero .scroll-hint {
+    margin-top: 40px;
+    font-size: 16px;
+    color: #b99ad4;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* ===== Gallery ===== */
+  .gallery-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .gallery-section h2 {
+    text-align: center;
+    font-size: clamp(32px, 6vw, 52px);
+    margin-bottom: 10px;
+    color: #ffd166;
+  }
+
+  .gallery-section .subtitle {
+    text-align: center;
+    color: #c9aee3;
+    margin-bottom: 40px;
+    font-size: 18px;
+  }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
+
+  .gallery-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 18px;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
+    animation: fadeInUp 0.8s ease backwards;
+    background: #2a0b45;
+  }
+  .gallery-item:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 15px 40px rgba(255, 107, 107, 0.35);
+  }
+
+  .gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    aspect-ratio: 1 / 1;
+    transition: transform 0.5s ease;
+  }
+  .gallery-item:hover img { transform: scale(1.1); }
+
+  .gallery-item .caption {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 30px 12px 12px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+    font-size: 14px;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .gallery-item:hover .caption { opacity: 1; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== Lightbox ===== */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    flex-direction: column;
+  }
+  .lightbox.open { display: flex; }
+
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 78vh;
+    border-radius: 12px;
+    box-shadow: 0 0 50px rgba(255, 209, 102, 0.3);
+    animation: zoomIn 0.3s ease;
+  }
+  @keyframes zoomIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .lightbox .lb-caption { margin-top: 15px; color: #ffd166; font-size: 18px; }
+
+  .lb-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: none;
+    font-size: 34px;
+    width: 55px; height: 55px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  .lb-btn:hover { background: rgba(255,107,107,0.6); }
+  .lb-prev { left: 20px; }
+  .lb-next { right: 20px; }
+  .lb-close {
+    position: absolute;
+    top: 20px; right: 25px;
+    background: none; border: none;
+    color: #fff; font-size: 40px;
+    cursor: pointer;
+  }
+
+  /* ===== Music player ===== */
+  .music-btn {
+    position: fixed;
+    bottom: 25px; right: 25px;
+    z-index: 50;
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #ff6b6b, #ffd166);
+    color: #1a052e;
+    font-size: 26px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(255,107,107,0.5);
+    transition: transform 0.3s;
+    animation: pulse 2s infinite;
+  }
+  .music-btn:hover { transform: scale(1.15); }
+  .music-btn.playing { animation: spinDisc 6s linear infinite; }
+  @keyframes spinDisc { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+  /* ===== Footer ===== */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: #b99ad4;
+    font-size: 15px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* Hide scrollbar in lightbox-friendly way (optional) */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #1a052e; }
+  ::-webkit-scrollbar-thumb { background: #6d1a8a; border-radius: 6px; }
+</style>
+</head>
+<body>
+
+<!-- Floating hearts/balloons will be added by JS -->
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="cake">🎂</div>
+  <h1>Happy Birthday to You Machu</h1>
+  <div class="name">To Someone Amazing ❤️</div>
+  <p class="message">
+    Today we celebrate YOU — every smile, every memory, every beautiful moment we've shared.
+    Scroll down to relive 25 of our favorite memories together. May this year bring you
+    endless joy, love, and dreams come true. 🥂✨
+  </p>
+  <div class="scroll-hint">▼ Scroll down to see the memories ▼</div>
+</section>
+
+<!-- ===== GALLERY ===== -->
+<section class="gallery-section">
+  <h2>📸 Our Beautiful Memories</h2>
+  <p class="subtitle">25 moments, 1 amazing person — click any photo to view it full screen</p>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<footer>
+  Made with ❤️ for an unforgettable birthday • {current year}
+</footer>
+
+<!-- ===== LIGHTBOX ===== -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose">✕</button>
+  <button class="lb-btn lb-prev" id="lbPrev">‹</button>
+  <img id="lbImg" src="" alt="Memory">
+  <button class="lb-btn lb-next" id="lbNext">›</button>
+  <div class="lb-caption" id="lbCaption"></div>
+</div>
+
+<!-- ===== MUSIC BUTTON ===== -->
+<button class="music-btn" id="musicBtn" title="Play / Pause music">🎵</button>
+<audio id="bgMusic" loop>
+  <source src="song.mp3" type="audio/mpeg">
+  Your browser does not support audio.
+</audio>
+
+<script>
+const IMAGE_FILES = [
+  'photo1.jpg.jpeg',  'photo2.jpg.jpeg',  'photo3.jpg.jpeg',  'photo4.jpg.jpeg',
+  'photo5.jpg.jpg',   'photo6.jpg.jpg',   'photo7.jpg.jpg',   'photo8.jpg.jpeg',
+  'photo9.jpg.jpeg',  'photo10.jpg.jpg', 'photo11.jpg.jpeg', 'photo13.jpg.jpg',
+  'photo14.jpg.jpeg', 'photo15.jpg.jpeg', 'photo16.jpg.jpeg', 'photo17.jpg.jpg',
+  'photo18.jpg.jpeg', 'photo19.jpg.jpg', 'photo21.jpg.jpg', 'photo22.jpg.jpg',
+  'photo23.jpg.jpeg', 'photo24.jpg.jpeg', 'photo25.jpg.jpeg', 'photo26.jpg.jpeg',
+  'photo27.jpg.jpeg'
+];
+const TOTAL_PHOTOS = IMAGE_FILES.length;
+const FOLDER = 'images/';
+const CAPTIONS = [];
+
+for (let i = 1; i <= TOTAL_PHOTOS; i++) {
+  CAPTIONS.push('Memory ' + i + ' 💖');
+}
+
+const gallery = document.getElementById('gallery');
+
+IMAGE_FILES.forEach((fileName, index) => {
+  const item = document.createElement('div');
+  item.className = 'gallery-item';
+  item.style.animationDelay = ((index + 1) * 0.05) + 's';
+  item.innerHTML =
+    '<img src="' + FOLDER + fileName + '" alt="Memory ' + (index + 1) + '" loading="lazy">' +
+    '<div class="caption">' + (CAPTIONS[index] || 'Memory ' + (index + 1)) + '</div>';
+  item.addEventListener('click', () => openLightbox(index + 1));
+  gallery.appendChild(item);
+});
+
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbCaption = document.getElementById('lbCaption');
+let currentIndex = 1;
+
+function openLightbox(index) {
+  currentIndex = index;
+  updateLightbox();
+  lightbox.classList.add('open');
+}
+function updateLightbox() {
+  lbImg.src = FOLDER + IMAGE_FILES[currentIndex - 1];
+  lbCaption.textContent = CAPTIONS[currentIndex - 1] || 'Memory ' + currentIndex;
+}
+document.getElementById('lbClose').addEventListener('click', () => lightbox.classList.remove('open'));
+document.getElementById('lbPrev').addEventListener('click', () => {
+  currentIndex = currentIndex === 1 ? TOTAL_PHOTOS : currentIndex - 1;
+  updateLightbox();
+});
+document.getElementById('lbNext').addEventListener('click', () => {
+  currentIndex = currentIndex === TOTAL_PHOTOS ? 1 : currentIndex + 1;
+  updateLightbox();
+});
+lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.classList.remove('open'); });
+
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('open')) return;
+  if (e.key === 'Escape') lightbox.classList.remove('open');
+  if (e.key === 'ArrowLeft') document.getElementById('lbPrev').click();
+  if (e.key === 'ArrowRight') document.getElementById('lbNext').click();
+});
+
+const musicBtn = document.getElementById('musicBtn');
+const bgMusic = document.getElementById('bgMusic');
+
+musicBtn.addEventListener('click', () => {
+  if (bgMusic.paused) {
+    bgMusic.play();
+    musicBtn.classList.add('playing');
+    musicBtn.textContent = '⏸';
+  } else {
+    bgMusic.pause();
+    musicBtn.classList.remove('playing');
+    musicBtn.textContent = '🎵';
+  }
+});
+
+const symbols = ['🎈', '❤️', '🎉', '✨', '🎊', '💜', '⭐'];
+function spawnFloating() {
+  const el = document.createElement('div');
+  el.className = 'floating';
+  el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+  el.style.left = Math.random() * 100 + 'vw';
+  el.style.fontSize = (18 + Math.random() * 30) + 'px';
+  el.style.animationDuration = (8 + Math.random() * 10) + 's';
+  el.style.animationDelay = (Math.random() * 8) + 's';
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 20000);
+}
+for (let i = 0; i < 18; i++) spawnFloating();
+setInterval(spawnFloating, 2500);
+
+function confettiBurst() {
+  for (let i = 0; i < 60; i++) {
+    const c = document.createElement('div');
+    c.className = 'floating';
+    c.textContent = ['🎉','🎊','✨','💛','🧡'][Math.floor(Math.random()*5)];
+    c.style.left = Math.random() * 100 + 'vw';
+    c.style.fontSize = (12 + Math.random() * 20) + 'px';
+    c.style.animationDuration = (3 + Math.random() * 3) + 's';
+    c.style.animationDelay = '0s';
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 7000);
+  }
+}
+window.addEventListener('load', () => {
+  confettiBurst();
+  setTimeout(confettiBurst, 1200);
+  setTimeout(confettiBurst, 2500);
+});
+
+document.querySelector('footer').innerHTML =
+  'Made with ❤️ for an unforgettable birthday • ' + new Date().getFullYear();
+</script>
+</body>
+</html>
